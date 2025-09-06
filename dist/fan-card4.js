@@ -1,7 +1,7 @@
 window.customCards = window.customCards || [];
 window.customCards.push({
-  type: "fan-mode-button-row",
-  name: "fan mode button row",
+  type: "fan-mode-button-row4",
+  name: "fan mode button row4",
   description: "A plugin to display your fan controls in a button row.",
   preview: false,
 });
@@ -28,22 +28,26 @@ class CustomFanModeRow extends LitElement {
 			customModes: false,
 			customText: false,
 			modeOff: "none",
-			modeOne: "low",
-			modeTwo: "medium",
-			modeThree: "high",
+			modeOne: "turtle",
+			modeTwo: "low",
+			modeThree: "medium",
+			modeFour: "high",
 			isOffColor: '#f44c09',
 			isOnModeOneColor: '#43A047',
 			isOnModeTwoColor: '#43A047',
 			isOnModeThreeColor: '#43A047',
+			isOnModeFourColor: '#43A047',
 			buttonInactiveColor: '#759aaa',
 			customOffText: 'OFF',
-			customModeOneText: 'LOW',
-			customModeTwoText: 'MED',
-			customModeThreeText: 'HIGH',
+			customModeOneText: 'MIN',
+			customModeTwoText: 'LOW',
+			customModeThreeText: 'MED',
+			customModeFourText: 'HIGH',
 			customOffText: 'OFF',
-			customLowText: 'LOW',
-			customMedText: 'MED',
-			customHiText: 'HIGH',
+			customLowText: 'MIN',
+			customMedText: 'LOW',
+			customHiText: 'MED',
+			customFullText: 'HIGH',
 		};
 	}
 	
@@ -56,28 +60,34 @@ class CustomFanModeRow extends LitElement {
 			_modeOne: String,
 			_modeTwo: String,
 			_modeThree: String,
+			_modeFour: String,
 			_width: String,
 			_height: String,
 			_leftColor: String,
 			_midLeftColor: String,
 			_midRightColor: String,
 			_rightColor: String,
+			_farRightColor: String,
 			_leftText: String,
 			_midLeftText: String,
 			_midRightText: String,
 			_rightText: String,
+			_FarRightText: String,
 			_leftName: String,
 			_midLeftName: String,
 			_midRightName: String,
 			_rightName: String,
+			_FarRightName: String,
 			_leftState: Boolean,
 			_midLeftState: Boolean,
 			_midRightState: Boolean,
 			_rightState: Boolean,
+			_farRightState: Boolean,
 			_hideLeft: Boolean,
 			_hideMidLeft: Boolean,
 			_hideMidRight: Boolean,
 			_hideRight: Boolean,
+			_hideFarRight: Boolean,
 		};
 	}
 
@@ -134,6 +144,12 @@ class CustomFanModeRow extends LitElement {
 						toggles name="${this._rightName}"
 						@click=${this.setMode}
 						.disabled=${this._rightState}>${this._rightText}</button>
+					<button
+						class='mode'
+						style='${this._farRightColor};min-width:${this._width};max-width:${this._width};height:${this._height};${this._hideFarRight}'
+						toggles name="${this._farRightName}"
+						@click=${this.setMode}
+						.disabled=${this._farRightState}>${this._farRightText}</button>
 				</div>
 			</hui-generic-entity-row>
 		`;
@@ -170,21 +186,25 @@ class CustomFanModeRow extends LitElement {
 		const onM1Clr = config.isOnModeOneColor;
 		const onM2Clr = config.isOnModeTwoColor;
 		const onM3Clr = config.isOnModeThreeColor;
+		const onM4Clr = config.isOnModeFourColor;
 		const offClr = config.isOffColor;
 		const buttonOffClr = config.buttonInactiveColor;
 		const mOff = config.modeOff;
 		const m1 = config.modeOne;
 		const m2 = config.modeTwo;
 		const m3 = config.modeThree;
+		const m4 = config.modeFour;
 		const custOffTxt = config.customOffText;
 		const custM1Txt = config.customModeOneText;
 		const custM2Txt = config.customModeTwoText;
 		const custM3Txt = config.customModeThreeText;
+		const custM4Txt = config.customModeFourText;
 						
 		let offstate;
 		let mode1;
 		let mode2;
 		let mode3;
+		let mode4;
 		
 		if (custModes) {
 			if (stateObj && stateObj.attributes) {
@@ -194,18 +214,22 @@ class CustomFanModeRow extends LitElement {
 					mode2 = 'on';
 				} else if (stateObj.state == 'on' && stateObj.attributes.preset_mode == m3 ) {
 					mode3 = 'on';
+				} else if (stateObj.state == 'on' && stateObj.attributes.preset_mode == m4 ) {
+					mode4 = 'on';
 				} else {
 					offstate = 'on';
 				}	
 			}
 		} else {
 			if (stateObj && stateObj.attributes) {
-				if (stateObj.state == 'on' && stateObj.attributes.preset_mode == "low" ) {
+				if (stateObj.state == 'on' && stateObj.attributes.preset_mode == "turtle" ) {
 					mode1 = 'on';
-				} else if (stateObj.state == 'on' && stateObj.attributes.preset_mode == "medium" ) {
+				} else if (stateObj.state == 'on' && stateObj.attributes.preset_mode == "low" ) {
 					mode2 = 'on';
-				} else if (stateObj.state == 'on' && stateObj.attributes.preset_mode == "high" ) {
+				} else if (stateObj.state == 'on' && stateObj.attributes.preset_mode == "medium" ) {
 					mode3 = 'on';
+				} else if (stateObj.state == 'on' && stateObj.attributes.preset_mode == "high" ) {
+					mode4 = 'on';
 				} else {
 					offstate = 'on';
 				}	
@@ -216,27 +240,32 @@ class CustomFanModeRow extends LitElement {
 		let m1text;
 		let m2text;
 		let m3text;
+		let m4text;
 		
 		if (custText) {
 			offtext = custOffTxt;
 			m1text = custM1Txt;
 			m2text = custM2Txt;
 			m3text = custM3Txt;
+			m4text = custM4Txt;
 		} else if (custModes) {
 			offtext = mOff;
 			m1text = m1;
 			m2text = m2;
 			m3text = m3;
+			m4text = m4;
 		} else {
 			offtext = "OFF";
-			m1text = "LOW";
-			m2text = "MED";
-			m3text = "HIGH";
+			m1text = "MIN";
+			m2text = "LOW";
+			m3text = "MED";
+			m4text = "HIGH";
 		}
 		
 		let mode1color;
 		let mode2color;
 		let mode3color;
+		let mode4color;
 		let offcolor;
 
 				
@@ -255,6 +284,11 @@ class CustomFanModeRow extends LitElement {
 				mode3color = 'background-color:'  + onM3Clr;
 			} else {
 				mode3color = 'background-color:' + buttonOffClr;
+			}
+			if (mode4 == 'on') {
+				mode4color = 'background-color:'  + onM4Clr;
+			} else {
+				mode4color = 'background-color:' + buttonOffClr;
 			}
 			if (offstate == 'on') {
 				offcolor = 'background-color:'  + offClr;
@@ -276,6 +310,11 @@ class CustomFanModeRow extends LitElement {
 				mode3color = 'background-color: var(--switch-checked-color)';
 			} else {
 				mode3color = 'background-color: var(--switch-unchecked-color)';
+			}
+			if (mode4 == 'on') {
+				mode4color = 'background-color: var(--switch-checked-color)';
+			} else {
+				mode4color = 'background-color: var(--switch-unchecked-color)';
 			}
 			if (offstate == 'on') {
 				offcolor = 'background-color: var(--switch-checked-color)';
@@ -316,6 +355,7 @@ class CustomFanModeRow extends LitElement {
 		let m1name = 'mode1'
 		let m2name = 'mode2'
 		let m3name = 'mode3'
+		let m4name = 'mode4'
 		
 		if (revButtons) {
 			this._stateObj = stateObj;
@@ -323,56 +363,68 @@ class CustomFanModeRow extends LitElement {
 			this._midLeftState = mode1 === 'on';
 			this._midRightState = mode2 === 'on';
 			this._rightState = mode3 === 'on';
+			this._farRightState = mode4 === 'on';
 			this._width = buttonwidth;
 			this._height = buttonheight;
 			this._leftColor = offcolor;
 			this._midLeftColor = mode1color;
 			this._midRightColor = mode2color;
 			this._rightColor = mode3color;
+			this._farRightColor = mode4color;
 			this._modeOff = mOff;
 			this._modeOne = m1;
 			this._modeTwo = m2;
 			this._modeThree = m3;
+			this._modeFour = m4;
 			this._leftText = offtext;
 			this._midLeftText = m1text;
 			this._midRightText = m2text;
 			this._rightText = m3text;
+			this._farRightText = m4text;
 			this._leftName = offname;
 			this._midLeftName = m1name;
 			this._midRightName = m2name;
 			this._rightName = m3name;
+			this._farRightName = m4name;
 			this._hideLeft = hideoff;
 			this._hideMidLeft = twomodes_left;
 			this._hideMidRight = twomodes_right;
 			this._hideRight = nohide;
+			this._hideFarRight = nohide;
 		} else {
 			this._stateObj = stateObj;
-			this._leftState = mode3 == 'on';
-			this._midLeftState = mode2 === 'on';
-			this._midRightState = mode1 === 'on';
-			this._rightState = offstate === 'on';
+			this._leftState = mode4 == 'on';
+			this._midLeftState = mode3 === 'on';
+			this._midRightState = mode2 === 'on';
+			this._rightState = mode1 === 'on';
+			this._farRightState = offstate === 'on';
 			this._width = buttonwidth;
 			this._height = buttonheight;
-			this._leftColor = mode3color;
-			this._midLeftColor = mode2color;
-			this._midRightColor = mode1color;
-			this._rightColor = offcolor;
+			this._leftColor = mode4color;
+			this._midLeftColor = mode3color;
+			this._midRightColor = mode2color;
+			this._rightColor = mode1color;
+			this._farRightColor = offcolor;
 			this._modeOff = mOff;
 			this._modeOne = m1;
 			this._modeTwo = m2;
 			this._modeThree = m3;
-			this._leftText = m3text;
-			this._midLeftText = m2text;
-			this._midRightText = m1text;
-			this._rightText = offtext;
-			this._leftName = m3name;
-			this._midLeftName = m2name;
-			this._midRightName = m1name;
-			this._rightName = offname;
+			this._modeFour = m4;
+			this._leftText = m4text;
+			this._midLeftText = m3text;
+			this._midRightText = m2text;
+			this._rightText = m1text;
+			this._farRightText = offtext;
+			this._leftName = m4name;
+			this._midLeftName = m3name;
+			this._midRightName = m2name;
+			this._rightName = m1name;
+			this._farRightName = offname;
 			this._hideLeft = nohide;
 			this._hideMidLeft = twomodes_left;
 			this._hideMidRight = twomodes_right;
 			this._hideRight = hideoff;
+			this._hidefarRight = hideoff;
 		}
 	}
 
@@ -393,9 +445,12 @@ class CustomFanModeRow extends LitElement {
 			} else if (mode == 'mode3') {
 				param.preset_mode = this._modeThree;
 				this.hass.callService('fan', 'set_preset_mode', param);
+			} else if (mode == 'mode4') {
+				param.preset_mode = this._modeFour;
+				this.hass.callService('fan', 'set_preset_mode', param);
 			}
 		}
 	}
 }
 	
-customElements.define('fan-mode-button-row', CustomFanModeRow);
+customElements.define('fan-mode-button-row4', CustomFanModeRow);
