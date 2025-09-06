@@ -1,0 +1,27 @@
+# This is an example yaml file for using the Tasmota Smart Ceiling Fan Control by Martin Jerry with 4-Level speed control.
+# It is assumed that you have "mqtt: !include mqtt.yaml" in your configuration.yaml file for Home Assisant
+# You will need to replace all 7 [tasmota_id]s with your tasmota id found on the web interface of the fan under
+# Configuration->MQTT->Topic = %topic% ([tasmota_id])
+fan:
+  - name: "Fan Example"
+    qos: 1
+    state_topic: "stat/[tasmota_id]/POWER"
+    command_topic: "cmnd/[tasmota_id]/POWER"
+    availability_topic: "tele/[tasmota_id]/LWT"
+    percentage_state_topic: "stat/[tasmota_id]/speed"
+    percentage_value_template: '{{ ((value | replace("3,","")) | int + 1) * 25 }}'
+    percentage_command_topic: "cmnd/[tasmota_id]/tuyasend4"
+    percentage_command_template: "3,{{ ((value | int - 1) / 25) | int }}"
+    preset_mode_state_topic: "stat/[tasmota_id]/speed"
+    preset_mode_value_template: '{{ value | replace("3,0", "turtle") | replace("3,1", "low") | replace("3,2", "medium") | replace("3,3", "high") }}'
+    preset_mode_command_topic: "cmnd/[tasmota_id]/tuyasend4"
+    preset_mode_command_template: '{{ value | replace("turtle", "3,0") | replace("low", "3,1") | replace("medium", "3,2") | replace("high", "3,3") }}'
+    preset_modes:
+      - "turtle"
+      - "low"
+      - "medium"
+      - "high"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    payload_on: "ON"
+    payload_off: "OFF"
